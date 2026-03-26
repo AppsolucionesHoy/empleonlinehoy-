@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Blogger Moderno</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* RESET PARA ANULAR BLOGGER */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body, html { height: 100%; width: 100%; overflow-x: hidden; background: #fff; }
+
+        /* FONDO ANIMADO DE LA IMAGEN */
+        .full-screen-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1f9 20%, #a1c4fd 50%, #c2e9fb 80%, #f5f7fa 100%);
+            background-size: 400% 400%;
+            animation: moveGradient 15s ease infinite;
+            z-index: -1;
+        }
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* NOTIFICACIÓN FLOTANTE (ARRIBA DERECHA) */
+        .ios-noti {
+            position: fixed;
+            top: 20px; right: 20px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex; gap: 12px;
+            transform: translateX(150%);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+        .ios-noti.active { transform: translateX(0); }
+        .noti-check { width: 35px; height: 35px; background: #34C759; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
+
+        /* CONTENEDOR TIPO APP */
+        .app-shell {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+        }
+
+        /* HEADER BM */
+        .app-nav {
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .app-nav b { font-size: 22px; font-weight: 900; }
+
+        /* CUERPO */
+        .main-content { padding: 0 20px 30px; text-align: center; }
+        h1 { font-size: 22px; font-weight: 800; margin-bottom: 5px; color: #1c1c1e; }
+        .tagline { font-size: 13px; color: #8e8e93; margin-bottom: 25px; line-height: 1.4; }
+
+        /* TARJETA CENTRAL */
+        .promo-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px 15px;
+            border: 1px solid #f2f2f7;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+            margin-bottom: 25px;
+        }
+        .amazon-img { width: 110px; margin-bottom: 15px; }
+        .promo-card p { font-size: 13px; color: #666; margin-bottom: 20px; padding: 0 10px; }
+
+        /* BOTÓN CONTINUAR (EXACTO A LA IMAGEN) */
+        .btn-pill {
+            background: #4A90E2;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(74,144,226,0.3);
+            transition: transform 0.2s;
+        }
+        .btn-pill:active { transform: scale(0.95); }
+
+        /* SECCIÓN RESEÑAS (3 COLUMNAS) */
+        .rev-title { text-align: left; font-size: 14px; font-weight: 700; margin: 0 0 15px 5px; }
+        .rev-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 25px; }
+        .rev-item { text-align: center; }
+        .rev-item img { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 5px; border: 2px solid #4A90E2; }
+        .rev-item b { font-size: 11px; display: block; }
+        .stars { color: #FFCC00; font-size: 8px; margin: 3px 0; }
+        .rev-item p { font-size: 9px; color: #8e8e93; font-style: italic; line-height: 1.2; }
+
+        /* CONTADOR */
+        .status-bar {
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #f2f2f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .dot { width: 8px; height: 8px; background: #34C759; border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* FOOTER */
+        .app-footer { margin-top: 30px; padding-bottom: 20px; font-size: 11px; color: #aeaeb2; }
+        .app-footer b { color: #3a3a3c; display: block; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="full-screen-bg"></div>
+
+<div class="ios-noti" id="noti">
+    <div class="noti-check"><i class="fas fa-check"></i></div>
+    <div class="noti-content">
+        <b>¡REGISTRO EXITOSO!</b>
+        <p>Bienvenido a la comunidad de Blogger Moderno. ¡Empecemos!</p>
+    </div>
+</div>
+
+<div class="app-shell">
+    <div class="app-nav">
+        <b>BM</b>
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="main-content">
+        <h1>¡Bienvenidos a<br>Blogger Moderno!</h1>
+        <p class="tagline">Tu fuente de contenido exclusivo y recomendaciones.</p>
+
+        <div class="promo-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" class="amazon-img" alt="Amazon">
+            <p>Accede a las mejores ofertas recomendadas por nuestro blogger.</p>
+            <a href="TU_ENLACE_AQUÍ" class="btn-pill">CONTINUAR <i class="fas fa-arrow-alt-circle-right"></i></a>
+        </div>
+
+        <p class="rev-title">Reseñas de Usuarios</p>
+        <div class="rev-row">
+            <div class="rev-item">
+                <img src="https://randomuser.me/api/portraits/women/11.jpg">
+                <b>Ana R.</b>
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Excelente contenido!"</p>
+            </div>
+            <div class="rev-item">
+                <img src="https://randomuser.me/api/portraits/men/22.jpg">
+                <b>Juan M.</b>
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Las recomendaciones son geniales."</p>
+            </div>
+            <div class="rev-item">
+                <img src="https://randomuser.me/api/portraits/women/33.jpg">
+                <b>Sofia C.</b>
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p>"Me encanta este blog."</p>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="dot"></div>
+            +15,340 Usuarios Activos Actualmente
+        </div>
+
+        <div class="app-footer">
+            <b>Servicios y Políticas</b>
+            <p>Servicios: Inicio | Blog | Suscribirse | Contacto</p>
+            <p>Políticas: Términos de Servicio | Privacidad | Aviso Legal</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = () => {
+        setTimeout(() => {
+            document.getElementById('noti').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('noti').classList.remove('active');
+            }, 4000);
+        }, 1500);
+    };
+</script>
+
+</body>
+</html>
